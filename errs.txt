@@ -1,0 +1,15 @@
+﻿
+			for (const name of 
+Object.keys(options)) if 
+(name !== "--" && 
+!this.hasOption(name) && !g
+lobalCommand.hasOption(name
+)) throw new 
+CACError(`Unknown option 
+\`${name.length > 1 ? 
+`--${name}` : 
+`-${name}`}\``);
+CACError: Unknown option 
+`--force`
+
+

@@ -1,0 +1,118 @@
+﻿
+> wanderelocal@0.0.0 build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 62 modules transformed.
+node.exe : [31mΓ£ù[39m 
+Build failed in 701ms
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: ([3  
+  1mΓ£ù[39m Build faile   
+ d in 701ms:String) [],    
+ RemoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+[31merror during build:
+[31msrc/pages/TravelerDash
+board.jsx (5:254): 
+"LuAlertCircle" is not 
+exported by "node_modules/r
+eact-icons/lu/index.mjs", 
+imported by "src/pages/Trav
+elerDashboard.jsx".[31m
+file: [36mC:/xampp/htdocs/
+WandereLocal/src/pages/Trav
+elerDashboard.jsx:5:254[31
+m
+[33m
+3: import DashboardLayout 
+from '../layouts/DashboardL
+ayout';
+4: import {
+5:   LuMap, LuBookmark, 
+LuBell, LuHistory, LuPlus, 
+LuShare2, LuLock, LuGlobe, 
+LuCompass, LuCircle, 
+LuStar, LuChevronRight, 
+LuMapPin, LuDownload, 
+LuCopy, LuEye, LuPen, 
+LuTrash2, LuClock, 
+LuCamera, LuSparkles, 
+LuArrowRight, LuCalendar, 
+LuUsers, LuCheck, LuX, 
+LuAlertCircle
+                           
+                           
+                           
+                           
+                           
+                           
+                           
+                           
+                           
+              ^
+6: } from 'react-icons/lu';
+[31m
+    at getRollupError (file
+:///C:/xampp/htdocs/Wandere
+Local/node_modules/rollup/d
+ist/es/shared/parseAst.js:4
+02:41)
+    at error (file:///C:/xa
+mpp/htdocs/WandereLocal/nod
+e_modules/rollup/dist/es/sh
+ared/parseAst.js:398:42)
+    at Module.error (file:/
+//C:/xampp/htdocs/WandereLo
+cal/node_modules/rollup/dis
+t/es/shared/node-entry.js:1
+7040:16)
+    at 
+Module.traceVariable (file:
+///C:/xampp/htdocs/WandereL
+ocal/node_modules/rollup/di
+st/es/shared/node-entry.js:
+17452:29)
+    at 
+ModuleScope.findVariable (f
+ile:///C:/xampp/htdocs/Wand
+ereLocal/node_modules/rollu
+p/dist/es/shared/node-entry
+.js:15070:39)
+    at Identifier.bind (fil
+e:///C:/xampp/htdocs/Wander
+eLocal/node_modules/rollup/
+dist/es/shared/node-entry.j
+s:5447:40)
+    at CallExpression.bind 
+(file:///C:/xampp/htdocs/Wa
+ndereLocal/node_modules/rol
+lup/dist/es/shared/node-ent
+ry.js:2825:28)
+    at CallExpression.bind 
+(file:///C:/xampp/htdocs/Wa
+ndereLocal/node_modules/rol
+lup/dist/es/shared/node-ent
+ry.js:12179:15)
+    at Property.bind (file:
+///C:/xampp/htdocs/WandereL
+ocal/node_modules/rollup/di
+st/es/shared/node-entry.js:
+2829:23)
+    at 
+ObjectExpression.bind (file
+:///C:/xampp/htdocs/Wandere
+Local/node_modules/rollup/d
+ist/es/shared/node-entry.js
+:2825:28)[39m

@@ -63,6 +63,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const switchRole = (newRole) => {
+    localStorage.setItem('userRole', newRole);
+    setUserRole(newRole);
+  };
+
   const logout = () => {
     localStorage.removeItem('isAuth');
     localStorage.removeItem('userRole');
@@ -73,7 +78,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userRole, userName, login, register, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userRole, userName, login, register, logout, switchRole }}>
       {children}
     </AuthContext.Provider>
   );

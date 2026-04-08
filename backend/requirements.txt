@@ -1,0 +1,6 @@
+flask
+flask-cors
+pymysql
+bcrypt
+requests
+urllib3

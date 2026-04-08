@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Dynamic Design System Tokens */
+  --color-primary: #4A90C2;
+  --color-primary-dark: #3A75A0;
+  --color-primary-light: #6BA9D6;
+  --color-primary-pale: #E8F1F7;
+  --color-primary-border: #BAD6EA;
+  
+  --color-secondary: #5FAE4B;
+  --color-secondary-alt: #EAF4E8;
+  --color-secondary-border: #C3E2BC;
+
+  --color-accent: #F39C12;
+  --color-accent-pale: #FFF7ED;
+  --color-accent-border: #FDE68A;
+
+  --color-terracotta: #E53935;
+  --color-terracotta-pale: #FFEBEE;
+  
+  --color-ink: #0F1E2D;
+  --color-ink-soft: #1C2B3A;
+  
+  --color-stone: #5F6B7A;
+  --color-stone-light: #8D9DB0;
+  
+  --color-cream: #FAFBFC;
+  --color-sand: #F7F9FC;
+  
+  --color-border: #DDE3ED;
+  --color-border-light: #EBF0F7;
+  
+  --color-surface: #FFFFFF;
+  --color-background: #F7F9FC;
+
+  /* Typography */
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Shadows for depth */
+  --shadow-xs: 0 1px 4px rgba(15, 30, 45, 0.04);
+  --shadow-sm: 0 2px 8px rgba(15, 30, 45, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 30, 45, 0.08);
+  --shadow-lg: 0 24px 48px rgba(15, 30, 45, 0.12);
+  --shadow-xl: 0 32px 64px rgba(15, 30, 45, 0.15);
+  --shadow-colored: 0 8px 24px rgba(74, 144, 194, 0.2);
+  --shadow-colored-secondary: 0 8px 24px rgba(95, 174, 75, 0.2);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 9999px;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button, a, input, select, textarea, .wl-card {
+  transition: all 0.2s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border); 
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-stone-light); 
+}
+
+/* Utility Animations */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+/* Global UI Components */
+
+/* Modern Buttons - Solid colors instead of heavy gradients */
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-colored);
+  background: var(--color-primary-dark);
+}
+
+.btn-secondary {
+  background: var(--color-secondary);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-colored-secondary);
+  background: #4E8E3C;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-stone);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-ghost:hover {
+  background: var(--color-sand);
+  color: var(--color-ink);
+  border-color: var(--color-stone-light);
+}
+
+/* Dashboard Page Base */
+.db-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}

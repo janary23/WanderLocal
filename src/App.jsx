@@ -15,6 +15,14 @@ import NominateBusiness from './pages/NominateBusiness';
 import BusinessDashboard from './pages/BusinessDashboard';
 import BusinessClaim from './pages/BusinessClaim';
 import AdminDashboard from './pages/AdminDashboard';
+import TravelerProfile from './pages/TravelerProfile';
+import TravelerSettings from './pages/TravelerSettings';
+import TravelerTrips from './pages/TravelerTrips';
+import TravelerWishlists from './pages/TravelerWishlists';
+import BusinessSettings from './pages/BusinessSettings';
+import BusinessListings from './pages/BusinessListings';
+import BusinessBookings from './pages/BusinessBookings';
+import BusinessReviews from './pages/BusinessReviews';
 
 import AuthModal from './components/AuthModal';
 
@@ -119,8 +127,15 @@ function App() {
 
             {/* ── Dashboard Pages (Always DashboardLayout) ── */}
             <Route path="/dashboard"          element={<ProtectedRoute><TravelerDashboard /></ProtectedRoute>} />
-            <Route path="/shortlist"          element={<ProtectedRoute><TravelerDashboard /></ProtectedRoute>} />
-            <Route path="/business-dashboard" element={<ProtectedRoute><BusinessDashboard /></ProtectedRoute>} />
+            <Route path="/trips"              element={<ProtectedRoute><TravelerTrips /></ProtectedRoute>} />
+            <Route path="/wishlists"          element={<ProtectedRoute><TravelerWishlists /></ProtectedRoute>} />
+            <Route path="/profile"            element={<ProtectedRoute><TravelerProfile /></ProtectedRoute>} />
+            <Route path="/account-settings"   element={<ProtectedRoute><TravelerSettings /></ProtectedRoute>} />
+            <Route path="/business"           element={<ProtectedRoute><BusinessDashboard /></ProtectedRoute>} />
+            <Route path="/business/settings"  element={<ProtectedRoute><BusinessSettings /></ProtectedRoute>} />
+            <Route path="/business/listings"  element={<ProtectedRoute><BusinessListings /></ProtectedRoute>} />
+            <Route path="/business/bookings"  element={<ProtectedRoute><BusinessBookings /></ProtectedRoute>} />
+            <Route path="/business/reviews"   element={<ProtectedRoute><BusinessReviews /></ProtectedRoute>} />
             <Route path="/admin"              element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>
