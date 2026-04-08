@@ -26,6 +26,7 @@ const BusinessListings = () => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3rem' }}>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: C.ink, margin: 0, fontFamily: C.ffDisplay }}>My Listings</h1>
           <button 
+            onClick={() => navigate('/onboarding')}
             style={{ 
               background: C.secondary, color: '#fff', border: 'none', padding: '0.8rem 1.5rem', 
               borderRadius: '12px', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,

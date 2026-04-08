@@ -12,6 +12,7 @@ import ListingDetail from './pages/ListingDetail';
 import ItineraryBuilder from './pages/ItineraryBuilder';
 import CommunityGallery from './pages/CommunityGallery';
 import NominateBusiness from './pages/NominateBusiness';
+import BusinessOnboarding from './pages/BusinessOnboarding';
 import BusinessDashboard from './pages/BusinessDashboard';
 import BusinessClaim from './pages/BusinessClaim';
 import AdminDashboard from './pages/AdminDashboard';
@@ -136,6 +137,7 @@ function App() {
             <Route path="/business/listings"  element={<ProtectedRoute><BusinessListings /></ProtectedRoute>} />
             <Route path="/business/bookings"  element={<ProtectedRoute><BusinessBookings /></ProtectedRoute>} />
             <Route path="/business/reviews"   element={<ProtectedRoute><BusinessReviews /></ProtectedRoute>} />
+            <Route path="/onboarding"         element={<ProtectedRoute><BusinessOnboarding /></ProtectedRoute>} />
             <Route path="/admin"              element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>
         </BrowserRouter>

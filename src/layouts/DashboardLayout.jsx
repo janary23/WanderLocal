@@ -18,7 +18,7 @@ const MENUS = {
     { id: 'language', label: 'Languages & currency', icon: <LuGlobe />, isModal: true },
     { id: 'help', label: 'Help Center', icon: <LuInfo />, path: '#' },
     { id: 'divider-2', divider: true },
-    { id: 'host-banner', isBanner: true, title: 'List a business', desc: 'Own a local gem? Claim it or list a new one today.', path: '/nominate-business' },
+    { id: 'host-banner', isBanner: true, title: 'List a business', desc: 'Own a local gem? Claim it or list a new one today.', path: '/onboarding' },
   ],
   business: [
     { id: 'overview',   label: 'Overview',              icon: <LuHouse />,         path: '/business' },
@@ -27,6 +27,8 @@ const MENUS = {
     { id: 'reviews',    label: 'Reviews',               icon: <LuMessageSquare />, path: '/business/reviews' },
     { id: 'divider-1',  divider: true },
     { id: 'settings',   label: 'Business Settings',     icon: <LuSettings />,      path: '/business/settings' },
+    { id: 'divider-2',  divider: true },
+    { id: 'host-banner', isBanner: true, title: 'Add new business', desc: 'Expand your portfolio by registering another listing.', path: '/onboarding' }
   ],
   admin: [
     { id: 'queue',       label: 'Queue',                icon: <LuCircle />,       path: '/admin' },
