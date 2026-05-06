@@ -24,11 +24,26 @@ import BusinessSettings from './pages/BusinessSettings';
 import BusinessListings from './pages/BusinessListings';
 import BusinessBookings from './pages/BusinessBookings';
 import BusinessReviews from './pages/BusinessReviews';
+import HelpCenter from './pages/HelpCenter';
+import TermsOfService from './pages/TermsOfService';
 
 import AuthModal from './components/AuthModal';
 
 const mainContentStyle = {
   paddingTop: '72px',
+};
+
+/* HomeRoute redirects logged-in users away from the landing page to their dashboard */
+const HomeRoute = () => {
+  const { isAuthenticated, userRole, isHost } = useContext(AuthContext);
+
+  if (isAuthenticated && userRole) {
+    if (userRole === 'admin')    return <Navigate to="/admin"    replace />;
+    if (isHost)                  return <Navigate to="/business" replace />;
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <><Navbar /><main style={{ ...mainContentStyle, paddingTop: 0 }}><Home /></main></>;
 };
 
 /* ProtectedRoute guarantees AuthModal is shown if not logged in */
@@ -51,10 +66,14 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-/* SmartLayout provides a generic Navbar if logged out, or DashboardLayout with Sidebar if logged in */
-/* Wait, the user wants SmartLayout pages (like Directory) to FORCE LOGIN as well, so we also check userRole! */
+/* HostRoute wrapper checks for isHost flag */
+const HostRoute = ({ children }) => {
+  const { isHost } = useContext(AuthContext);
+  return isHost ? children : <Navigate to="/onboarding" />;
+};
+
 const SmartLayout = ({ children, activeTabId }) => {
-  const { userRole } = useContext(AuthContext);
+  const { userRole, isHost } = useContext(AuthContext);
 
   if (userRole) {
     return (
@@ -87,10 +106,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             {/* ── Public Pages (Always Navbar) ──────────── */}
-            <Route
-              path="/"
-              element={<><Navbar /><main style={{ ...mainContentStyle, paddingTop: 0 }}><Home /></main></>}
-            />
+            <Route path="/" element={<HomeRoute />} />
 
             {/*
               /login and /register now redirect to Home (/) which has the modal.
@@ -98,6 +114,9 @@ function App() {
             */}
             <Route path="/login"    element={<Navigate to="/" replace />} />
             <Route path="/register" element={<Navigate to="/" replace />} />
+            
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/help/terms" element={<TermsOfService />} />
 
             <Route
               path="/nominate"
@@ -132,11 +151,14 @@ function App() {
             <Route path="/wishlists"          element={<ProtectedRoute><TravelerWishlists /></ProtectedRoute>} />
             <Route path="/profile"            element={<ProtectedRoute><TravelerProfile /></ProtectedRoute>} />
             <Route path="/account-settings"   element={<ProtectedRoute><TravelerSettings /></ProtectedRoute>} />
-            <Route path="/business"           element={<ProtectedRoute><BusinessDashboard /></ProtectedRoute>} />
-            <Route path="/business/settings"  element={<ProtectedRoute><BusinessSettings /></ProtectedRoute>} />
-            <Route path="/business/listings"  element={<ProtectedRoute><BusinessListings /></ProtectedRoute>} />
-            <Route path="/business/bookings"  element={<ProtectedRoute><BusinessBookings /></ProtectedRoute>} />
-            <Route path="/business/reviews"   element={<ProtectedRoute><BusinessReviews /></ProtectedRoute>} />
+            
+            {/* Host Only Routes */}
+            <Route path="/business"           element={<ProtectedRoute><HostRoute><BusinessDashboard /></HostRoute></ProtectedRoute>} />
+            <Route path="/business/settings"  element={<ProtectedRoute><HostRoute><BusinessSettings /></HostRoute></ProtectedRoute>} />
+            <Route path="/business/listings"  element={<ProtectedRoute><HostRoute><BusinessListings /></HostRoute></ProtectedRoute>} />
+            <Route path="/business/bookings"  element={<ProtectedRoute><HostRoute><BusinessBookings /></HostRoute></ProtectedRoute>} />
+            <Route path="/business/reviews"   element={<ProtectedRoute><HostRoute><BusinessReviews /></HostRoute></ProtectedRoute>} />
+            
             <Route path="/onboarding"         element={<ProtectedRoute><BusinessOnboarding /></ProtectedRoute>} />
             <Route path="/admin"              element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>

@@ -1,22 +1,8 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { LuMessageCircle } from 'react-icons/lu';
-
-const C = {
-  primary: '#4A90C2',
-  secondary: '#5FAE4B',
-  accent: '#F39C12',
-  terracotta: '#E53935',
-  ink: '#0F1E2D',
-  inkDark: '#222222',
-  stone: '#5F6B7A',
-  stoneLight: '#8D9DB0',
-  border: '#DDE3ED',
-  bgSurface: '#FFFFFF',
-  ffBody: "'Inter', sans-serif",
-  ffDisplay: "'Manrope', sans-serif",
-};
+import { LuMessageCircle, LuMapPin, LuMap } from 'react-icons/lu';
+import { glassCardStyle, glassCardHover, applyHover, removeHover, btnPrimaryStyle, btnPrimaryHover, btnGhostStyle, btnGhostHover } from '../inlineStyles';
 
 const MOCK_ITINERARIES = [
   { id: 1, title: 'Baguio Weekend Escape', dest: 'Baguio City', days: 3, stops: 12, status: 'draft', visibility: 'private', img: 'https://picsum.photos/seed/15967078/800/600' },
@@ -36,13 +22,13 @@ const ProfileSidebarView = ({ navigate }) => {
   const ObjectTab = new URLSearchParams(useLocation().search).get('sub') || 'about';
 
   return (
-    <div style={{ maxWidth: 1120, margin: '0 auto', width: '100%', padding: '4rem 2rem' }}>
+    <div className="animate-fade-in" style={{ maxWidth: 1120, margin: '0 auto', width: '100%', padding: '4rem 2rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 3fr)', gap: '6rem' }}>
         
         {/* Profile Sidebar */}
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, color: C.inkDark, marginBottom: '2.5rem', fontFamily: C.ffDisplay }}>Profile</h1>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <h1 style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--color-ink)', marginBottom: '2.5rem', fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>Profile</h1>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {[
               { id: 'about', label: 'About me' },
               { id: 'trips', label: 'Past trips' },
@@ -55,18 +41,19 @@ const ProfileSidebarView = ({ navigate }) => {
                   onClick={() => navigate(`/profile?sub=${item.id}`)}
                   style={{
                     textAlign: 'left',
-                    padding: '0.75rem 1rem',
-                    background: isActive ? '#F7F7F7' : 'transparent',
-                    color: isActive ? C.inkDark : C.stone,
-                    fontWeight: isActive ? 600 : 400,
-                    borderRadius: '8px',
-                    border: 'none',
+                    padding: '0.85rem 1.25rem',
+                    background: isActive ? 'var(--color-surface)' : 'transparent',
+                    color: isActive ? 'var(--color-ink)' : 'var(--color-stone)',
+                    fontWeight: isActive ? 700 : 500,
+                    borderRadius: '12px',
+                    border: isActive ? '1px solid var(--color-border)' : '1px solid transparent',
+                    boxShadow: isActive ? 'var(--shadow-xs)' : 'none',
                     cursor: 'pointer',
                     fontSize: '1rem',
-                    fontFamily: C.ffBody,
-                    transition: 'background 0.2s',
+                    fontFamily: 'var(--font-body)',
+                    transition: 'all 0.2s',
                   }}
-                  onMouseOver={e => !isActive && (e.currentTarget.style.background = '#F7F7F7')}
+                  onMouseOver={e => !isActive && (e.currentTarget.style.background = 'var(--color-sand)')}
                   onMouseOut={e => !isActive && (e.currentTarget.style.background = 'transparent')}
                 >
                   {item.label}
@@ -77,37 +64,53 @@ const ProfileSidebarView = ({ navigate }) => {
         </div>
 
         {/* Profile Content */}
-        <div>
+        <div style={{ paddingTop: '1rem' }}>
           {ObjectTab === 'about' && (
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: C.inkDark, margin: 0 }}>About me</h2>
-                <button style={{ borderRadius: '8px', border: `1px solid ${C.inkDark}`, background: 'transparent', padding: '0.5rem 1rem', fontWeight: 600, fontSize: '0.875rem', cursor: 'pointer', fontFamily: C.ffBody }}>Edit</button>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-ink)', margin: 0, fontFamily: 'var(--font-display)' }}>About me</h2>
+                <button 
+                  style={{ ...btnGhostStyle, padding: '0.6rem 1.25rem', fontSize: '0.9rem' }}
+                  onMouseOver={e => applyHover(e, btnGhostHover)}
+                  onMouseOut={e => removeHover(e, btnGhostStyle)}
+                >
+                  Edit
+                </button>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '3rem' }}>
-                <div style={{ borderRadius: '24px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)', padding: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', border: `1px solid ${C.border}` }}>
-                  <div style={{ width: 104, height: 104, borderRadius: '50%', background: C.inkDark, color: '#fff', fontSize: '3rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '3rem' }}>
+                <div style={{ ...glassCardStyle, padding: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }} onMouseOver={e => applyHover(e, glassCardHover)} onMouseOut={e => removeHover(e, glassCardStyle)}>
+                  <div style={{ width: 104, height: 104, borderRadius: '50%', background: 'linear-gradient(135deg, var(--color-primary-dark), var(--color-primary))', color: '#fff', fontSize: '3rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', boxShadow: 'var(--shadow-md)' }}>
                     AL
                   </div>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: 600, color: C.inkDark, margin: '0 0 0.5rem' }}>Alex</h3>
-                  <p style={{ color: C.stone, fontSize: '1rem', margin: 0 }}>Guest</p>
+                  <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-ink)', margin: '0 0 0.5rem', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>Alex</h3>
+                  <p style={{ color: 'var(--color-stone)', fontSize: '1rem', margin: 0, fontWeight: 500, background: 'var(--color-sand)', padding: '4px 12px', borderRadius: '8px' }}>Traveler</p>
                 </div>
 
-                <div style={{ alignSelf: 'center' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: C.inkDark, marginBottom: '0.5rem' }}>Complete your profile</h3>
-                  <p style={{ color: C.stone, fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                <div style={{ alignSelf: 'center', paddingRight: '2rem' }}>
+                  <div style={{ display: 'inline-block', padding: '6px 14px', background: 'var(--color-accent-pale)', color: 'var(--color-accent)', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '1rem' }}>
+                    Profile Setup
+                  </div>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-ink)', marginBottom: '0.75rem', fontFamily: 'var(--font-display)' }}>Complete your profile</h3>
+                  <p style={{ color: 'var(--color-stone)', fontSize: '1rem', lineHeight: 1.6, marginBottom: '2rem' }}>
                     Your WanderLocal profile is an important part of every journey. Complete yours to help others get to know you.
                   </p>
-                  <button style={{ background: '#E61E4D', color: '#fff', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', fontFamily: C.ffBody }}>
+                  <button 
+                    style={btnPrimaryStyle}
+                    onMouseOver={e => applyHover(e, btnPrimaryHover)}
+                    onMouseOut={e => removeHover(e, btnPrimaryStyle)}
+                  >
                     Get started
                   </button>
                 </div>
               </div>
 
-              <div style={{ borderTop: `1px solid ${C.border}`, marginTop: '3rem', paddingTop: '2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: C.inkDark, fontWeight: 600 }}>
-                  <LuMessageCircle size={20} /> Reviews I've written
+              <div style={{ marginTop: '4rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--color-ink)', fontWeight: 800, fontSize: '1.25rem', fontFamily: 'var(--font-display)' }}>
+                  <LuMessageCircle size={24} color="var(--color-primary)" /> Reviews I've written
+                </div>
+                <div style={{ padding: '2rem 0', color: 'var(--color-stone)' }}>
+                   No reviews written yet.
                 </div>
               </div>
             </div>
@@ -115,16 +118,18 @@ const ProfileSidebarView = ({ navigate }) => {
 
           {ObjectTab === 'trips' && (
             <div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: C.inkDark, margin: '0 0 2rem' }}>Past trips</h2>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-ink)', margin: '0 0 2rem', fontFamily: 'var(--font-display)' }}>Past trips</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                 {MOCK_ITINERARIES.map((trip, i) => (
-                  <div key={i} style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${C.border}`, cursor: 'pointer', background: '#fff', display: 'flex' }} onClick={() => navigate('/itinerary')}>
-                    <div style={{ width: 140, height: 120, position: 'relative' }}>
+                  <div key={i} style={{ ...glassCardStyle, padding: 0, overflow: 'hidden', cursor: 'pointer', display: 'flex' }} onClick={() => navigate('/itinerary')} onMouseOver={e => applyHover(e, glassCardHover)} onMouseOut={e => removeHover(e, glassCardStyle)}>
+                    <div style={{ width: 140, position: 'relative' }}>
                       <img src={trip.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={trip.title} />
                     </div>
-                    <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                      <div style={{ fontWeight: 800, fontSize: '1.1rem', color: C.ink, marginBottom: 6 }}>{trip.title}</div>
-                      <div style={{ fontSize: '0.85rem', color: C.stone }}>{trip.dest} • {trip.days} Days</div>
+                    <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--glass-bg)' }}>
+                      <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-ink)', marginBottom: 8, fontFamily: 'var(--font-display)' }}>{trip.title}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--color-stone)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <LuMapPin color="var(--color-secondary)" size={14} /> {trip.dest} • {trip.days} Days
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -134,8 +139,10 @@ const ProfileSidebarView = ({ navigate }) => {
           
           {ObjectTab === 'connections' && (
              <div>
-               <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: C.inkDark, margin: '0 0 2rem' }}>Connections</h2>
-               <p style={{ color: C.stone }}>No connections yet. Connect with verified hosts and travelers.</p>
+               <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-ink)', margin: '0 0 2rem', fontFamily: 'var(--font-display)' }}>Connections</h2>
+               <div style={{ ...glassCardStyle, padding: '3rem', textAlign: 'center', borderStyle: 'dashed' }} onMouseOver={e => applyHover(e, glassCardHover)} onMouseOut={e => removeHover(e, glassCardStyle)}>
+                  <p style={{ color: 'var(--color-stone)', fontSize: '1rem', margin: 0 }}>No connections yet. Connect with verified hosts and travelers.</p>
+               </div>
              </div>
           )}
         </div>

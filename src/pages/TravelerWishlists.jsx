@@ -1,19 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
-
-const C = {
-  primary: '#4A90C2',
-  secondary: '#5FAE4B',
-  accent: '#F39C12',
-  terracotta: '#E53935',
-  ink: '#0F1E2D',
-  stone: '#5F6B7A',
-  border: '#DDE3ED',
-  bgSurface: '#FFFFFF',
-  ffBody: "'Inter', sans-serif",
-  ffDisplay: "'Manrope', sans-serif",
-};
+import { LuBookmark, LuMapPin } from 'react-icons/lu';
+import { glassCardStyle, glassCardHover, applyHover, removeHover } from '../inlineStyles';
 
 const MOCK_SHORTLIST = [
   { id: 1, name: 'Cafe Amore', city: 'Baguio City', type: 'Food & Beverage', img: 'https://picsum.photos/seed/15541188/800/600' },
@@ -27,24 +16,36 @@ const TravelerWishlists = () => {
 
   return (
     <DashboardLayout activeTabId="shortlist">
-      <div style={{ maxWidth: 1120, margin: '0 auto', width: '100%', padding: '4rem 2rem' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: C.ink, margin: '0 0 3rem', fontFamily: C.ffDisplay }}>Wishlists</h1>
+      <div className="animate-fade-in" style={{ maxWidth: 1120, margin: '0 auto', width: '100%', padding: '4rem 2rem' }}>
+        <div style={{ marginBottom: '3rem' }}>
+           <div style={{ display: 'inline-block', padding: '6px 14px', background: 'var(--color-accent-pale)', color: 'var(--color-accent)', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '1rem' }}>
+             Saved Gems
+           </div>
+           <h1 style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--color-ink)', margin: 0, fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>Wishlists</h1>
+        </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
           {MOCK_SHORTLIST.map((place, i) => (
             <div 
               key={i} 
-              onClick={() => navigate('/listing/1')}
-              style={{ borderRadius: 16, overflow: 'hidden', background: '#fff', border: `1px solid ${C.border}`, cursor: 'pointer', transition: 'box-shadow 0.2s', display: 'flex', flexDirection: 'column' }} 
-              onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.06)'} 
-              onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}
+              onClick={() => navigate(`/listing/${place.id}`)}
+              style={{ ...glassCardStyle, padding: 0, display: 'flex', flexDirection: 'column', cursor: 'pointer', overflow: 'hidden' }} 
+              onMouseOver={e => applyHover(e, glassCardHover)} 
+              onMouseOut={e => removeHover(e, glassCardStyle)}
             >
-              <div style={{ height: 200 }}>
+              <div style={{ height: 200, position: 'relative' }}>
                 <img src={place.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={place.name} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 60%, rgba(11,22,33,0.8) 100%)' }} />
+                <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.4)', width: 36, height: 36, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                   <LuBookmark size={16} fill="currentColor" />
+                </div>
+                <div style={{ position: 'absolute', bottom: 12, left: 16, right: 16 }}>
+                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#fff', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{place.name}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500, textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}><LuMapPin size={14} /> {place.city}</div>
+                </div>
               </div>
-              <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: C.ink, marginBottom: 4 }}>{place.name}</div>
-                <div style={{ fontSize: '0.85rem', color: C.stone, marginBottom: 12 }}>{place.city} • {place.type}</div>
+              <div style={{ padding: '1.25rem', background: 'var(--glass-bg)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ fontSize: '0.85rem', color: 'var(--color-stone)', fontWeight: 600 }}>{place.type}</div>
               </div>
             </div>
           ))}

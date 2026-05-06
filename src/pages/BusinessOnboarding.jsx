@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LuCheck, LuChevronLeft, LuImagePlus, LuMapPin, LuInfo } from 'react-icons/lu';
+import { LuCheck, LuChevronLeft, LuImagePlus, LuMapPin, LuInfo, LuLoader } from 'react-icons/lu';
+import { useAuth } from '../context/AuthContext';
+import { onboardBusiness } from '../services/api';
 
 export default function BusinessOnboarding() {
   const navigate = useNavigate();
+  const { userId } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
   const totalSteps = 20;
 
   // Form State matching the 20 steps
@@ -42,12 +46,29 @@ export default function BusinessOnboarding() {
     safety: []
   });
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
     } else {
-      // Step 20 - Publish goes to dashboard
-      navigate('/business/listings');
+      // Final step – submit to backend
+      setSubmitting(true);
+      try {
+        const res = await onboardBusiness({
+          user_id: userId,
+          ...formData,
+          weekendPrice: formData.weekdayPrice
+            ? (parseFloat(formData.weekdayPrice) * (1 + (parseFloat(formData.weekendPremium) || 0) / 100)).toFixed(2)
+            : 0,
+        });
+        if (res.status === 'success') {
+          navigate('/business');
+        } else {
+          alert(res.message || 'Submission failed. Please try again.');
+        }
+      } catch {
+        alert('Network error. Please try again.');
+      }
+      setSubmitting(false);
     }
   };
 
@@ -526,9 +547,10 @@ export default function BusinessOnboarding() {
           
           <button 
             onClick={handleNext}
-            style={primaryBtnStyle}
+            disabled={submitting}
+            style={{ ...primaryBtnStyle, ...(submitting ? { opacity: 0.7, cursor: 'not-allowed' } : {}), display: 'flex', alignItems: 'center', gap: 8 }}
           >
-            {currentStep === totalSteps ? 'Publish listing' : 'Next'}
+            {submitting ? <><LuLoader style={{ animation: 'spin 1s linear infinite' }} /> Publishing...</> : currentStep === totalSteps ? 'Publish listing' : 'Next'}
           </button>
         </div>
       </footer>

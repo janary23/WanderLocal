@@ -4,3 +4,5 @@ pymysql
 bcrypt
 requests
 urllib3
+dbutils
+google-genai

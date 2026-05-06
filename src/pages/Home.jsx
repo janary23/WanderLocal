@@ -24,7 +24,7 @@ const T = {
   primaryLight:   '#6BA9D6',
   primaryPale:    '#E8F1F7',
   primaryBorder:  '#BAD6EA',
-  secondary:      '#5FAE4B',
+  secondary:      '#5A8BA8',
   secondaryAlt:   '#EAF4E8',
   accent:         '#F39C12',
   terracotta:     '#E53935',

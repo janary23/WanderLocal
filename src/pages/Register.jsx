@@ -10,10 +10,26 @@ function StepRegister({ onNext }) {
   const [role, setRole] = useState('traveler');
   const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { register } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onNext({ ...form, role });
+    setError('');
+    setLoading(true);
+    try {
+      const result = await register(form.name, form.email, form.password, role);
+      if (result.success) {
+        onNext({ ...form, role });
+      } else {
+        setError(result.message || 'Registration failed. Please try again.');
+      }
+    } catch (err) {
+      setError('Unable to connect to server. Make sure the backend is running.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -125,19 +141,39 @@ function StepRegister({ onNext }) {
           </div>
         </div>
 
+        {/* Error message */}
+        {error && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '0.75rem 1rem', borderRadius: 10,
+            background: 'rgba(220,38,38,0.08)', border: '1.5px solid rgba(220,38,38,0.25)',
+            color: '#DC2626', fontSize: '0.875rem', fontWeight: 500
+          }}>
+            <span style={{ flexShrink: 0, fontWeight: 700 }}>⚠</span>
+            {error}
+          </div>
+        )}
+
         <button type="submit"
+          disabled={loading}
           style={{
             width: '100%', padding: '1rem', marginTop: '0.5rem',
-            background: 'linear-gradient(135deg, #2D5016, #3D6B1F)',
+            background: loading ? '#6B9E4A' : 'linear-gradient(135deg, #2D5016, #3D6B1F)',
             color: '#fff', border: 'none', borderRadius: 12,
-            fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
+            fontSize: '1rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            boxShadow: '0 4px 16px rgba(45,80,22,0.35)', transition: 'all 0.2s ease'
+            boxShadow: '0 4px 16px rgba(45,80,22,0.35)', transition: 'all 0.2s ease',
+            opacity: loading ? 0.8 : 1
           }}
-          onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseOver={e => { if (!loading) e.currentTarget.style.transform = 'translateY(-2px)'; }}
           onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
         >
-          Continue <LuArrowRight />
+          {loading ? (
+            <>
+              <span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.75s linear infinite' }} />
+              Creating account…
+            </>
+          ) : <>Continue <LuArrowRight /></>}
         </button>
       </form>
 
@@ -315,9 +351,10 @@ const Register = () => {
   const [step, setStep] = useState(1); // 1=form, 2=verify, 3=onboard
   const [regData, setRegData] = useState({});
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { userRole } = useContext(AuthContext);
 
   const handleRegisterNext = (data) => {
+    // Registration already completed in StepRegister; just advance steps
     setRegData(data);
     setStep(2);
   };
@@ -327,8 +364,10 @@ const Register = () => {
   };
 
   const handleOnboardDone = () => {
-    login(regData.email || '');
-    if (regData.role === 'business') {
+    // User is already logged in (persisted by AuthContext.register)
+    // Use the stored role from context; fall back to regData.role
+    const role = userRole || regData.role;
+    if (role === 'business') {
       navigate('/business-dashboard');
     } else {
       navigate('/dashboard');
@@ -346,6 +385,10 @@ const Register = () => {
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
       `}</style>
 

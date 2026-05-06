@@ -7,7 +7,7 @@ import {
 /* ── Color Tokens ── */
 const C = {
   primary: '#4A90C2',
-  secondary: '#5FAE4B',
+  secondary: '#5A8BA8',
   ink: '#0F1E2D',
   stone: '#5F6B7A',
   border: '#DDE3ED',
