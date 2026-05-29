@@ -110,7 +110,7 @@ const MainDashboardContent = ({ navigate }) => {
         
         <div style={{ position: 'relative', zIndex: 10 }}>
           <button
-            onClick={() => navigate('/itinerary')}
+            onClick={() => window.dispatchEvent(new Event('open-itinerary-chat'))}
             style={{ 
               background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.4)',
@@ -200,44 +200,69 @@ const MainDashboardContent = ({ navigate }) => {
                 </div>
                 <h3 style={{ margin: '0 0 8px', color: 'var(--color-ink)', fontSize: '1.25rem', fontWeight: 800 }}>No journeys planned</h3>
                 <p style={{ margin: '0 0 24px', fontSize: '1rem', color: 'var(--color-stone)' }}>Your itinerary list is empty. Start crafting your dream trip!</p>
-                <button onClick={() => navigate('/itinerary')} style={btnPrimaryStyle} onMouseOver={e => applyHover(e, btnPrimaryHover)} onMouseOut={e => removeHover(e, btnPrimaryStyle)}>Create Itinerary</button>
+                <button onClick={() => window.dispatchEvent(new Event('open-itinerary-chat'))} style={btnPrimaryStyle} onMouseOver={e => applyHover(e, btnPrimaryHover)} onMouseOut={e => removeHover(e, btnPrimaryStyle)}>Create Itinerary</button>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                 {itineraries.slice(0, 4).map((trip, idx) => {
                   const ss = STATUS_STYLE[trip.status] || STATUS_STYLE.draft;
-                  // Generate an abstract gradient based on index for a premium visual touch
-                  const gradients = [
-                    'linear-gradient(120deg, #E8F4F8 0%, #D1EAF5 100%)',
-                    'linear-gradient(120deg, #FCF8EE 0%, #F5ECD3 100%)',
-                    'linear-gradient(120deg, #E6F3EC 0%, #CDE7DA 100%)',
-                    'linear-gradient(120deg, #FDF1ED 0%, #FAD7CC 100%)',
-                  ];
-                  const tripBg = gradients[idx % gradients.length];
-                  
+
+                  // Smart destination image (same logic as TravelerTrips)
+                  const getImg = (dest) => {
+                    if (!dest) return 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=400&q=80';
+                    const t = dest.toLowerCase();
+                    if (t.includes('beach') || t.includes('boracay') || t.includes('elnido') || t.includes('el nido') || t.includes('coron') || t.includes('siargao') || t.includes('island') || t.includes('palawan'))
+                      return 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80';
+                    if (t.includes('baguio') || t.includes('mountain') || t.includes('pulag') || t.includes('hike') || t.includes('sagada'))
+                      return 'https://images.unsplash.com/photo-1542856391-010fb87dcfed?auto=format&fit=crop&w=400&q=80';
+                    if (t.includes('vigan') || t.includes('heritage') || t.includes('historic') || t.includes('church'))
+                      return 'https://images.unsplash.com/photo-1590001155093-a3c66ab0c3ff?auto=format&fit=crop&w=400&q=80';
+                    if (t.includes('manila') || t.includes('city') || t.includes('metro'))
+                      return 'https://images.unsplash.com/photo-1555899434-94d1368aa7af?auto=format&fit=crop&w=400&q=80';
+                    return 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=400&q=80';
+                  };
+
                   return (
-                    <div key={trip.id} style={{ ...glassCardStyle,  cursor: 'pointer', display: 'flex', flexDirection: 'column', padding: 0  }} onMouseOver={e => applyHover(e, glassCardHover)} onMouseOut={e => removeHover(e, glassCardStyle)} onClick={() => navigate('/itinerary')}>
-                      <div style={{ height: 160, background: tripBg, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <LuMap size={60} color="var(--color-ink)" style={{ opacity: 0.05 }} />
-                        <div style={{ position: 'absolute', top: 16, left: 16, background: 'var(--color-surface)', color: 'var(--color-ink)', border: '1px solid var(--color-border)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800, boxShadow: 'var(--shadow-xs)' }}>
-                          <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: ss.color, marginRight: 6 }}></span>
+                    <div key={trip.id} style={{ ...glassCardStyle, cursor: 'pointer', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }} onMouseOver={e => applyHover(e, glassCardHover)} onMouseOut={e => removeHover(e, glassCardStyle)} onClick={() => navigate('/trips')}>
+                      {/* Cover photo with overlays */}
+                      <div style={{ height: 160, position: 'relative', overflow: 'hidden' }}>
+                        <img
+                          src={getImg(trip.destination)}
+                          alt={trip.title}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }}
+                          onMouseOver={e => e.currentTarget.style.transform = 'scale(1.06)'}
+                          onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                        />
+                        {/* Dark vignette */}
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 100%)' }} />
+
+                        {/* Status badge */}
+                        <div style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', color: ss.color, padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: 5, boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
+                          <span style={{ width: 6, height: 6, borderRadius: '50%', background: ss.color, display: 'inline-block' }} />
                           {ss.label}
                         </div>
-                        <div style={{ position: 'absolute', top: 16, right: 16, background: 'var(--color-surface)', width: 32, height: 32, borderRadius: '8px', color: 'var(--color-stone)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-xs)' }}>
+
+                        {/* Visibility icon */}
+                        <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(8px)', width: 30, height: 30, borderRadius: '8px', color: 'var(--color-stone)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
                           {VIS_ICON[trip.visibility]}
                         </div>
+
+                        {/* Destination pin on image */}
+                        {trip.destination && (
+                          <div style={{ position: 'absolute', bottom: 10, left: 12, right: 12, display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <LuMapPin size={13} color="#fff" />
+                            <span style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 700, textShadow: '0 1px 4px rgba(0,0,0,0.6)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {trip.destination}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'var(--glass-bg)' }}>
-                        <div>
-                          <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--color-ink)', marginBottom: 8, lineHeight: 1.3 }}>{trip.title}</div>
-                          {trip.destination && (
-                            <div style={{ fontSize: '0.9rem', color: 'var(--color-stone)', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
-                              <LuMapPin color="var(--color-secondary)" size={16} /> {trip.destination}
-                            </div>
-                          )}
-                        </div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--color-stone-light)', marginTop: 20, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600 }}>
-                           <LuCalendar size={14} /> Updated {trip.updated_at ? new Date(trip.updated_at).toLocaleDateString() : '—'}
+
+                      {/* Card body */}
+                      <div style={{ padding: '1.1rem 1.25rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'var(--glass-bg)' }}>
+                        <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--color-ink)', marginBottom: 6, lineHeight: 1.3 }}>{trip.title}</div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--color-stone-light)', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600 }}>
+                          <LuCalendar size={13} /> Updated {trip.updated_at ? new Date(trip.updated_at).toLocaleDateString() : '—'}
                         </div>
                       </div>
                     </div>

@@ -8,7 +8,7 @@ import { getListings, toggleSave, getWishlist } from '../services/api';
 import { glassCardStyle, glassCardHover, btnPrimaryStyle, btnPrimaryHover, btnSecondaryStyle, btnSecondaryHover, btnGhostStyle, btnGhostHover, applyHover, removeHover } from '../inlineStyles';
 
 const CATEGORIES = ['All', 'Food', 'Heritage', 'Nature', 'Shopping'];
-const TIERS = ['All', 'Verified', 'Community', 'Other'];
+const TIERS = ['All', 'Verified'];
 
 // Utility to clean up encoding issues from DB (e.g., â€“ to -)
 const fixText = (text) => {
@@ -241,29 +241,7 @@ const Directory = () => {
               </div>
             )}
             
-            {/* Community Tier */}
-            {(tierFilter === 'All' || tierFilter === 'Community') && community.length > 0 && (
-              <div>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '2rem', color: 'var(--color-ink)', marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: 12, letterSpacing: '-0.02em' }}>
-                  <LuStar color="var(--color-accent)" size={28} /> Community Favorites
-                </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                  {community.map(l => <CommunityCard key={l.id} l={l} saved={savedIds.includes(l.id)} onSave={handleSave} />)}
-                </div>
-              </div>
-            )}
 
-            {/* Fallback Tier */}
-            {(tierFilter === 'All' || tierFilter === 'Other') && fallback.length > 0 && (
-              <div>
-                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.5rem', color: 'var(--color-stone)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: 12, letterSpacing: '-0.01em' }}>
-                  <LuMapPin /> Unverified Map Data
-                </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
-                  {fallback.map(l => <FallbackCard key={l.id} l={l} />)}
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>

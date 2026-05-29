@@ -66,6 +66,8 @@ export const getItineraries = (user_id) => req(`/itineraries?user_id=${user_id}`
 export const getItinerary   = (id) => req(`/itineraries/${id}`);
 export const createItinerary = (data) =>
   req('/itineraries', { method: 'POST', body: JSON.stringify(data) });
+export const saveFullItinerary = (data) =>
+  req('/itineraries/save-full', { method: 'POST', body: JSON.stringify(data) });
 export const updateItinerary = (id, data) =>
   req(`/itineraries/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 export const deleteItinerary = (id) =>
@@ -114,3 +116,6 @@ export const updateQueueItem = (lid, action, tier) =>
 export const getClaims       = () => req('/admin/claims');
 export const updateClaim     = (cid, status) =>
   req(`/admin/claims/${cid}`, { method: 'PUT', body: JSON.stringify({ status }) });
+
+export const generateAiChat  = (prompt) =>
+  req('/ai-chat', { method: 'POST', body: JSON.stringify({ prompt }) });

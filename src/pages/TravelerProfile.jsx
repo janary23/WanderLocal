@@ -121,7 +121,7 @@ const ProfileSidebarView = ({ navigate }) => {
               <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-ink)', margin: '0 0 2rem', fontFamily: 'var(--font-display)' }}>Past trips</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                 {MOCK_ITINERARIES.map((trip, i) => (
-                  <div key={i} style={{ ...glassCardStyle, padding: 0, overflow: 'hidden', cursor: 'pointer', display: 'flex' }} onClick={() => navigate('/itinerary')} onMouseOver={e => applyHover(e, glassCardHover)} onMouseOut={e => removeHover(e, glassCardStyle)}>
+                  <div key={i} style={{ ...glassCardStyle, padding: 0, overflow: 'hidden', cursor: 'pointer', display: 'flex' }} onClick={() => window.dispatchEvent(new Event('open-itinerary-chat'))} onMouseOver={e => applyHover(e, glassCardHover)} onMouseOut={e => removeHover(e, glassCardStyle)}>
                     <div style={{ width: 140, position: 'relative' }}>
                       <img src={trip.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={trip.title} />
                     </div>

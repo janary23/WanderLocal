@@ -34,6 +34,7 @@ export const glassCardStyle = {
   border: tokens.glassBorder,
   borderRadius: tokens.radiusLg,
   boxShadow: tokens.shadowSm,
+  transform: 'translateY(0)',
   transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
 };
 
@@ -57,6 +58,7 @@ export const btnPrimaryStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   gap: '0.5rem',
+  transform: 'translateY(0)',
   transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
 };
 
@@ -81,6 +83,7 @@ export const btnSecondaryStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   gap: '0.5rem',
+  transform: 'translateY(0)',
   transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
 };
 
@@ -103,6 +106,7 @@ export const btnGhostStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   gap: '0.5rem',
+  transform: 'translateY(0)',
   transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
 };
 

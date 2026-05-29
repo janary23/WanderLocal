@@ -9,7 +9,7 @@ import Directory from './pages/Directory';
 import Login from './pages/Login';
 import TravelerDashboard from './pages/TravelerDashboard';
 import ListingDetail from './pages/ListingDetail';
-import ItineraryBuilder from './pages/ItineraryBuilder';
+import ItineraryChatbot from './components/ItineraryChatbot';
 import CommunityGallery from './pages/CommunityGallery';
 import NominateBusiness from './pages/NominateBusiness';
 import BusinessOnboarding from './pages/BusinessOnboarding';
@@ -137,10 +137,6 @@ function App() {
               element={<SmartLayout activeTabId="directory"><ListingDetail /></SmartLayout>}
             />
             <Route
-              path="/itinerary"
-              element={<SmartLayout activeTabId="itineraries"><ItineraryBuilder /></SmartLayout>}
-            />
-            <Route
               path="/gallery"
               element={<SmartLayout activeTabId="gallery"><CommunityGallery /></SmartLayout>}
             />
@@ -162,6 +158,7 @@ function App() {
             <Route path="/onboarding"         element={<ProtectedRoute><BusinessOnboarding /></ProtectedRoute>} />
             <Route path="/admin"              element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>
+          <ItineraryChatbot />
         </BrowserRouter>
       </AuthProvider>
     </LanguageProvider>

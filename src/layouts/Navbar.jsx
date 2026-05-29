@@ -10,7 +10,7 @@ import { LuArrowRight, LuUser, LuSearch, LuGlobe } from 'react-icons/lu';
 const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, userRole, userName, logout, switchRole } = useContext(AuthContext);
+  const { isAuthenticated, userRole, isHost, userName, logout, switchRole } = useContext(AuthContext);
   const [modal, setModal] = useState(null); // null | 'login' | 'register'
   const [scrolled, setScrolled] = useState(pathname !== '/');
   const [profileOpen, setProfileOpen] = useState(false);
@@ -99,21 +99,34 @@ const Navbar = () => {
         {/* Right: Actions */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.25rem' }}>
           
-          {isAuthenticated && userRole === 'traveler' && (
-            <div 
+          {/* Become a Host: shown when logged in but no hosting account yet */}
+          {isAuthenticated && !isHost && userRole !== 'admin' && (
+            <div
+              onClick={() => navigate('/onboarding')}
+              style={{ fontSize: '0.9rem', fontWeight: 600, color: scrolled ? '#0F1E2D' : '#fff', cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: '999px', transition: 'background 0.2s' }}
+              onMouseOver={e => e.currentTarget.style.background = scrolled ? '#F4F6F9' : 'rgba(255,255,255,0.1)'}
+              onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+            >
+              Become a Host
+            </div>
+          )}
+          {/* Switch to hosting: logged in WITH a host account, currently in traveler mode */}
+          {isAuthenticated && isHost && userRole === 'traveler' && (
+            <div
               onClick={() => { switchRole('business'); navigate('/business'); }}
               style={{ fontSize: '0.9rem', fontWeight: 600, color: scrolled ? '#0F1E2D' : '#fff', cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: '999px', transition: 'background 0.2s' }}
-              onMouseOver={e => e.currentTarget.style.background = scrolled ? '#F4F6F9' : 'rgba(255,255,255,0.1)'} 
+              onMouseOver={e => e.currentTarget.style.background = scrolled ? '#F4F6F9' : 'rgba(255,255,255,0.1)'}
               onMouseOut={e => e.currentTarget.style.background = 'transparent'}
             >
               Switch to hosting
             </div>
           )}
-          {isAuthenticated && userRole === 'business' && (
-            <div 
+          {/* Switch to traveling: logged in WITH a host account, currently in business mode */}
+          {isAuthenticated && isHost && userRole === 'business' && (
+            <div
               onClick={() => { switchRole('traveler'); navigate('/dashboard'); }}
               style={{ fontSize: '0.9rem', fontWeight: 600, color: scrolled ? '#0F1E2D' : '#fff', cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: '999px', transition: 'background 0.2s' }}
-              onMouseOver={e => e.currentTarget.style.background = scrolled ? '#F4F6F9' : 'rgba(255,255,255,0.1)'} 
+              onMouseOver={e => e.currentTarget.style.background = scrolled ? '#F4F6F9' : 'rgba(255,255,255,0.1)'}
               onMouseOut={e => e.currentTarget.style.background = 'transparent'}
             >
               Switch to traveling
@@ -151,7 +164,6 @@ const Navbar = () => {
                       {userRole === 'admin' ? 'Admin Dashboard' : userRole === 'business' ? 'Business Portal' : 'My Dashboard'}
                     </Link>
                   )}
-                  <Link to="/itinerary" style={{ display: 'block', padding: '0.75rem 1.25rem', color: '#0F1E2D', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }} onMouseOver={e => e.currentTarget.style.background = '#F4F6F9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>Trip Planner</Link>
                   <Link to="/gallery" style={{ display: 'block', padding: '0.75rem 1.25rem', color: '#0F1E2D', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }} onMouseOver={e => e.currentTarget.style.background = '#F4F6F9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>Community Gallery</Link>
                   <Link to="/help" style={{ display: 'block', padding: '0.75rem 1.25rem', color: '#0F1E2D', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }} onMouseOver={e => e.currentTarget.style.background = '#F4F6F9'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>Help Center</Link>
                   <div style={{ height: '1px', background: '#EBF0F7', margin: '0.5rem 0' }} />
@@ -163,15 +175,16 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <div 
+              {/* Not logged in: Become a Host opens register modal */}
+              <div
                 onClick={() => setModal('register')}
                 style={{ fontSize: '0.9rem', fontWeight: 600, color: scrolled ? '#0F1E2D' : '#fff', cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: '999px', transition: 'background 0.2s' }}
-                onMouseOver={e => e.currentTarget.style.background = scrolled ? '#F4F6F9' : 'rgba(255,255,255,0.1)'} 
+                onMouseOver={e => e.currentTarget.style.background = scrolled ? '#F4F6F9' : 'rgba(255,255,255,0.1)'}
                 onMouseOut={e => e.currentTarget.style.background = 'transparent'}
               >
                 Become a Host
               </div>
-              <button 
+              <button
                 onClick={() => setModal('login')}
                 style={{ background: scrolled ? '#0F1E2D' : '#fff', color: scrolled ? '#fff' : '#0F1E2D', border: 'none', padding: '0.6rem 1.25rem', borderRadius: '999px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}
               >

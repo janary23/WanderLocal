@@ -58,7 +58,7 @@ const BUSINESS_FEATURES = [
 ];
 
 export default function AuthModal({ onClose }) {
-  const [step, setStep] = useState('email'); // 'email', 'otp', 'name', 'tour'
+  const [step, setStep] = useState('email'); // 'email', 'otp', 'name', 'tour', 'google-welcome'
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -95,10 +95,21 @@ export default function AuthModal({ onClose }) {
   const handleGoogle = useCallback(async (credential) => {
     const res = await authCtx.loginWithGoogle(credential);
     if (res.success) {
-      onClose();
-      if (res.role === 'admin') navigate('/admin');
-      else if (res.isHost) navigate('/business');
-      else navigate('/dashboard');
+      if (res.is_new) {
+        // Brand-new account → show welcome / profile-completion step
+        setUserData(res.user);
+        // Pre-fill name fields from Google
+        const parts = (res.user.name || '').trim().split(' ');
+        setFirstName(parts[0] || '');
+        setLastName(parts.slice(1).join(' ') || '');
+        setStep('google-welcome');
+      } else {
+        // Existing user → go straight to dashboard
+        onClose();
+        if (res.role === 'admin') navigate('/admin');
+        else if (res.isHost) navigate('/business');
+        else navigate('/dashboard');
+      }
     } else {
       setError(res.message || 'Google sign-in failed.');
     }
@@ -294,6 +305,7 @@ export default function AuthModal({ onClose }) {
                 onClick={() => {
                   if (step === 'otp') setStep('email');
                   if (step === 'name') setStep('email');
+                  if (step === 'google-welcome') setStep('email');
                   setError('');
                   setCode('');
                 }}
@@ -310,7 +322,7 @@ export default function AuthModal({ onClose }) {
           </div>
 
           {/* Progress bar for signup */}
-          {step === 'name' && (
+          {(step === 'name' || step === 'google-welcome') && (
             <div style={{ display: 'flex', gap: 5, margin: '0 1.5rem', marginBottom: '1.25rem' }}>
               <div style={{ flex: 1, height: 3, borderRadius: 2, background: '#4A90C2' }} />
               <div style={{ flex: 1, height: 3, borderRadius: 2, background: '#4A90C2' }} />
@@ -331,6 +343,88 @@ export default function AuthModal({ onClose }) {
                 {error}
               </div>
             )}
+
+            {step === 'google-welcome' && (
+              <div style={{ animation: 'wlSlideRightIn 0.35s cubic-bezier(0.16,1,0.3,1)' }}>
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#222222', margin: 0, marginBottom: '0.35rem' }}>Let's create your account</h2>
+                  <p style={{ color: '#717171', fontSize: '1rem', margin: 0 }}>This information is required to book or host.</p>
+                </div>
+
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setError('');
+                  setLoading(true);
+                  const fullName = `${firstName} ${lastName}`.trim();
+                  const u = { ...userData, name: fullName };
+                  authCtx.loginWithUser(u);
+                  setUserData(u);
+                  setLoading(false);
+                  setStep('tour');
+                }} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+                  {/* Name Block */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '1rem', fontWeight: 600, color: '#222222', marginBottom: '0.5rem' }}>Legal name</label>
+                    <div style={{ border: '1px solid #B0B0B0', borderRadius: '8px', overflow: 'hidden' }}>
+                      <input type="text" required value={firstName} onChange={e => setFirstName(e.target.value)}
+                        placeholder="First name"
+                        style={{ width: '100%', padding: '1.2rem 1rem', border: 'none', borderBottom: '1px solid #B0B0B0', boxSizing: 'border-box', outline: 'none', fontSize: '1rem', color: '#222' }} />
+                      <input type="text" value={lastName} onChange={e => setLastName(e.target.value)}
+                        placeholder="Last name"
+                        style={{ width: '100%', padding: '1.2rem 1rem', border: 'none', boxSizing: 'border-box', outline: 'none', fontSize: '1rem', color: '#222' }} />
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: '#717171', marginTop: '0.5rem', lineHeight: 1.4 }}>
+                      Make sure it matches the name on your government ID. If you go by another name, you can <a href="#" style={{ color: '#222', fontWeight: 600, textDecoration: 'underline' }}>add a preferred first name</a>.
+                    </p>
+                  </div>
+
+                  {/* DOB Block */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '1rem', fontWeight: 600, color: '#222222', marginBottom: '0.5rem' }}>Date of birth</label>
+                    <input type="date" required value={dob} onChange={e => setDob(e.target.value)}
+                      style={{ width: '100%', padding: '1.2rem 1rem', border: '1px solid #B0B0B0', borderRadius: '8px', boxSizing: 'border-box', outline: 'none', fontSize: '1rem', color: '#222', fontFamily: 'inherit' }} />
+                  </div>
+
+                  {/* Password Block — optional for Google users */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '1rem', fontWeight: 600, color: '#222222', marginBottom: '0.5rem' }}>
+                      Password <span style={{ fontWeight: 400, color: '#A8A29E', fontSize: '0.85rem' }}>(optional — lets you also log in with email)</span>
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
+                        placeholder="Password"
+                        style={{ width: '100%', padding: '1.2rem 1rem', border: '1px solid #B0B0B0', borderRadius: '8px', boxSizing: 'border-box', outline: 'none', fontSize: '1rem', color: '#222', paddingRight: '4rem' }} />
+                      <button type="button" onClick={() => setShowPw(!showPw)}
+                        style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline', color: '#222', fontSize: '0.9rem' }}>
+                        {showPw ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Promotions Box */}
+                  <div style={{ background: '#F7F7F7', padding: '1.2rem', borderRadius: '8px', fontSize: '0.9rem', color: '#222' }}>
+                    <p style={{ margin: '0 0 1rem 0', lineHeight: 1.5 }}>
+                      WanderLocal will send you promotions such as deals and marketing notifications. You can opt out anytime via account settings or within marketing emails.
+                    </p>
+                    <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', margin: 0 }}>
+                      <span style={{ flex: 1, paddingRight: '1rem' }}>I don't want to receive WanderLocal promotions.</span>
+                      <input type="checkbox" checked={optOut} onChange={e => setOptOut(e.target.checked)} style={{ width: '22px', height: '22px', accentColor: '#222' }} />
+                    </label>
+                  </div>
+
+                  {/* Terms */}
+                  <p style={{ fontSize: '0.75rem', color: '#717171', margin: 0, lineHeight: 1.5 }}>
+                    By selecting <strong>Agree and continue</strong>, I agree to WanderLocal's <a href="/help/terms" style={{ color: '#0055FF', fontWeight: 600, textDecoration: 'underline' }}>Terms of Service</a>, <a href="/help/terms" style={{ color: '#0055FF', fontWeight: 600, textDecoration: 'underline' }}>Payments Terms of Service</a>, and <a href="/help/terms" style={{ color: '#0055FF', fontWeight: 600, textDecoration: 'underline' }}>Nondiscrimination Policy</a>, and acknowledge the <a href="/help/terms" style={{ color: '#0055FF', fontWeight: 600, textDecoration: 'underline' }}>Privacy Policy</a>.
+                  </p>
+
+                  <button type="submit" disabled={loading} style={{ ...primaryBtn, padding: '1.2rem', fontSize: '1.1rem', borderRadius: '8px', boxShadow: 'none' }}>
+                    {loading ? 'Creating account...' : 'Agree and continue'}
+                  </button>
+                </form>
+              </div>
+            )}
+
 
             {step === 'email' && (
               <div style={{ animation: 'wlSlideRightIn 0.35s cubic-bezier(0.16,1,0.3,1)' }}>

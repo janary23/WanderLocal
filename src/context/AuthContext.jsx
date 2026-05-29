@@ -8,24 +8,27 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('isAuth'));
-  const [userRole,  setUserRole]  = useState(localStorage.getItem('userRole')  || null);
+  const _storedRole = localStorage.getItem('userRole') || null;
+  const [userRole,  setUserRole]  = useState(_storedRole === 'user' ? 'traveler' : _storedRole);
   const [isHost,    setIsHost]    = useState(localStorage.getItem('isHost') === 'true');
   const [userName,  setUserName]  = useState(localStorage.getItem('userName')  || 'User');
   const [userId,    setUserId]    = useState(localStorage.getItem('userId')     || null);
   const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail') || null);
 
   const _persist = (uid, name, email, role, is_host) => {
+    // Normalize DB role 'user' → frontend role 'traveler'
+    const frontendRole = role === 'user' ? 'traveler' : role;
     localStorage.setItem('isAuth',    'true');
     localStorage.setItem('userId',    uid);
     localStorage.setItem('userName',  name);
     localStorage.setItem('userEmail', email);
-    localStorage.setItem('userRole',  role);
+    localStorage.setItem('userRole',  frontendRole);
     localStorage.setItem('isHost',    String(is_host));
     setIsAuthenticated(true);
     setUserId(String(uid));
     setUserName(name);
     setUserEmail(email);
-    setUserRole(role);
+    setUserRole(frontendRole);
     setIsHost(is_host);
   };
 
@@ -33,20 +36,38 @@ export const AuthProvider = ({ children }) => {
     _persist(user.id, user.name, user.email, user.role, user.is_host);
   };
 
-  const loginWithGoogle = async (credential, role = 'traveler') => {
+  const loginWithGoogle = async (credential) => {
     try {
-      const data = await api.googleAuth(credential, role);
+      const data = await api.googleAuth(credential);
       if (data.status === 'success') {
         const { id, name, email: em, role: r, is_host } = data.user;
-        _persist(id, name, em, r, is_host);
-        return { success: true, role: r, isHost: is_host };
+        if (!data.is_new) {
+          // Existing user → log straight in
+          _persist(id, name, em, r, is_host);
+        }
+        // For new users, we return the data but don't persist yet;
+        // AuthModal will show the welcome step then call loginWithUser() to finish.
+        return {
+          success: true,
+          is_new:  !!data.is_new,
+          user:    data.user,
+          role:    r,
+          isHost:  is_host,
+        };
       }
       return { success: false, message: data.message };
     } catch (e) {
       console.error('Google login error:', e);
-      return { success: false, message: 'Server error during Google login' };
+      const isNetworkErr = e instanceof TypeError && e.message.includes('fetch');
+      return {
+        success: false,
+        message: isNetworkErr
+          ? 'Cannot connect to server. Please make sure the backend is running.'
+          : 'Server error during Google login',
+      };
     }
   };
+
 
   const login = async (email, password) => {
     try {

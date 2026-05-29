@@ -125,9 +125,14 @@ const ListingDetail = () => {
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: C.ink, marginBottom: '1.5rem', fontFamily: C.ffDisplay }}>Plan a Trip</h3>
             <p style={{ color: C.stone, fontSize: '0.95rem', marginBottom: '2rem' }}>Add this highly rated artisan market to your Philippine itinerary to keep track of your journey.</p>
             
-            <Link to="/itinerary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', padding: '1rem', background: C.secondary, color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: '1.05rem', textDecoration: 'none', marginBottom: '1.5rem', transition: 'background 0.2s' }}>
+            <button 
+              onClick={() => window.dispatchEvent(new Event('open-itinerary-chat'))}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', padding: '1rem', background: C.secondary, color: '#fff', borderRadius: 12, fontWeight: 700, fontSize: '1.05rem', border: 'none', cursor: 'pointer', marginBottom: '1.5rem', transition: 'all 0.2s' }}
+              onMouseOver={e => e.currentTarget.style.background = '#466F87'}
+              onMouseOut={e => e.currentTarget.style.background = C.secondary}
+            >
               Add to Itinerary
-            </Link>
+            </button>
 
             <div style={{ borderTop: `1px solid ${C.border}`, margin: '0 -2rem', padding: '1.5rem 2rem 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem', color: C.ink }}>

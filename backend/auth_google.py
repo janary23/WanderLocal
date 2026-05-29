@@ -47,6 +47,7 @@ def google_login():
 
     # ── 2. Upsert user in DB ─────────────────────────────────────
     conn = None
+    is_new = False
     try:
         conn = get_db()
         with conn.cursor() as cur:
@@ -79,6 +80,7 @@ def google_login():
                 uid     = cur.lastrowid
                 role    = 'user'
                 is_host = False
+                is_new  = True   # ← brand new account, frontend should show welcome step
 
     except pymysql.Error as e:
         return jsonify({"status": "error", "message": f"DB error: {str(e)}"}), 500
@@ -89,6 +91,7 @@ def google_login():
     return jsonify({
         "status": "success",
         "message": "Google login successful",
+        "is_new": is_new,
         "user": {
             "id":      uid,
             "name":    name,
@@ -97,3 +100,4 @@ def google_login():
             "is_host": is_host,
         }
     })
+

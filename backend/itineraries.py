@@ -96,6 +96,67 @@ def create_itinerary():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+# ── POST /itineraries/save-full ──────────────────────────────────
+@itineraries_bp.route("/itineraries/save-full", methods=["POST", "OPTIONS"])
+def save_full_itinerary():
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
+
+    data = request.get_json(silent=True) or {}
+    user_id = data.get("user_id")
+    title = data.get("title", "My Travel Plan")
+    destination = data.get("destination", "Philippines")
+    days = data.get("days", [])
+
+    if not user_id:
+        return jsonify({"status": "error", "message": "user_id required"}), 400
+
+    try:
+        conn = get_db()
+        with conn.cursor() as cursor:
+            # 1. Insert Itinerary Meta
+            cursor.execute(
+                "INSERT INTO itineraries (user_id, title, destination, visibility, status) VALUES (%s, %s, %s, 'private', 'saved')",
+                (user_id, title, destination)
+            )
+            it_id = cursor.lastrowid
+
+            # 2. Insert Days and Stops
+            for day in days:
+                day_index = day.get("day_index", 1)
+                day_label = day.get("day_label", f"Day {day_index}")
+                cursor.execute(
+                    "INSERT INTO itinerary_days (itinerary_id, day_label, day_index) VALUES (%s, %s, %s)",
+                    (it_id, day_label, day_index)
+                )
+                day_id = cursor.lastrowid
+
+                stops = day.get("stops", [])
+                for idx, stop in enumerate(stops):
+                    cursor.execute(
+                        """INSERT INTO itinerary_stops
+                           (day_id, listing_id, custom_name, stop_time, duration, stop_type, sort_order)
+                           VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                        (
+                            day_id,
+                            stop.get("listing_id"),
+                            stop.get("name"),
+                            stop.get("time"),
+                            stop.get("duration"),
+                            stop.get("type"),
+                            idx + 1
+                        )
+                    )
+            conn.commit()
+        conn.close()
+        return jsonify({"status": "success", "itinerary_id": it_id}), 201
+    except pymysql.Error as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
+
+
 # ── GET /itineraries/<id> ────────────────────────────────────────
 @itineraries_bp.route("/itineraries/<int:iid>", methods=["GET"])
 def get_itinerary(iid):
